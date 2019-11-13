@@ -105,7 +105,7 @@
         
         if ($PSBoundParameters.ContainsKey("Password")){
             Write-Verbose "[INFO] Username: $($Username)"
-            Write-Verbose "[INFO] Password: $($Password)"
+            #Write-Verbose "[INFO] Password: $($Password)"
             $UnsecurePassword = (New-Object System.Management.Automation.PSCredential(“username”, $Password)).GetNetworkCredential().Password
         }
         
