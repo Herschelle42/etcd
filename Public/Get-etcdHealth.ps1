@@ -25,18 +25,19 @@ function Get-etcdHealth {
    [Management.Automation.PSCredential]
 .OUTPUTS
    [string]
+.EXAMPLE 
+   Get-etcdHealth -Protocol http -ComputerName etcd.corp.local
 .NOTES
    Author:  Clint Fritz
    etcd version: 2.x
 
    Although this function seems a little bit of overkill for what is essentially an easy Invoke-WebRequest.
 
-   Not sure if a Credential is actually required for accessing the health url. but is required on the etcd
-   I have created this against.
+   And really not sure that Credentials \ username and password parameters are required.
 
 
 #>
-[CmdletBinding(DefaultParameterSetName="ByCredential")]
+[CmdletBinding()]
 Param(
     #Name, FQDN or IP address of etcd server
     [Parameter(Mandatory)]
