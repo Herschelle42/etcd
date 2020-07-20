@@ -12,17 +12,9 @@ function Get-etcdHealth {
     The port to connect to etcd. For example 8080. Default is none.
 .PARAMETER HealthPath
     The url path to the health response.
-.PARAMETER Username
-    The username to use to for authentication
-.PARAMETER Password
-    The password to use to for authentication
-.PARAMETER Credential
-    A powershell Credential object to use to for authentication
 
 .INPUTS
    [String]
-   [SecureString]
-   [Management.Automation.PSCredential]
 .OUTPUTS
    [string]
 .EXAMPLE 
@@ -32,9 +24,6 @@ function Get-etcdHealth {
    etcd version: 2.x
 
    Although this function seems a little bit of overkill for what is essentially an easy Invoke-WebRequest.
-
-   And really not sure that Credentials \ username and password parameters are required.
-
 
 #>
 [CmdletBinding()]
@@ -49,21 +38,9 @@ Param(
     [ValidatePattern("^[1-9][0-9]{0,4}$")]
     [string]$Port,
 
-    [Parameter(Mandatory=$true,ParameterSetName="Credential")]
-    [ValidateNotNullOrEmpty()]
-    [Management.Automation.PSCredential]$Credential,
-
     #Health url path - Default is /health
     [Parameter(Mandatory=$false)]
     [string]$HealthPath="/health",
-
-    #Username to access requested key
-    [Parameter(Mandatory=$true,ParameterSetName="Username")]
-    [string]$Username,
-
-    #Password of user to access requested Key
-    [Parameter(Mandatory=$true,ParameterSetName="Username")]
-    [SecureString]$Password,
 
     #Protocol. http\https - Default is https
     [Parameter(Mandatory=$false)]
@@ -88,7 +65,7 @@ Begin {
 Process {
 
     try {
-        $response = Invoke-WebRequest -Uri $uri -Credential $Credential
+        $response = Invoke-WebRequest -Uri $uri
 
         $startPos = $response.RawContent.IndexOf("{")
         $endPos = $response.RawContent.LastIndexOf("}")
