@@ -67,7 +67,7 @@ function Get-etcdKey {
         #The port on the etcd for the API
         [Parameter(Mandatory=$false)]
         [ValidatePattern("^[1-9][0-9]{0,4}$")]
-        [string]$Port,
+        [int]$Port,
 
         #Username to access requested key
         [Parameter(Mandatory=$true,ParameterSetName="Username")]
