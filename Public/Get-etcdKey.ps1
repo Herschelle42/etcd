@@ -1,4 +1,4 @@
-﻿function Get-etcdKey {
+function Get-etcdKey {
 <#
 .SYNOPSIS
   Get a Key from etcd v2 server
@@ -25,7 +25,7 @@
     createdIndex  : 1216086
 
 .EXAMPLE
-  $SecurePassword = ConvertTo-SecureString “P@ssword” -AsPlainText -Force
+  $SecurePassword = ConvertTo-SecureString "P@ssword" -AsPlainText -Force
   Get-etcdKey -ComputerName "etcd.corp.local" -Port 2379 -Username MyUsername -Password $SecurePassword -Key "/v2/keys/abcm"
 
     key           : /abcm
@@ -54,6 +54,11 @@
 
 [CmdletBinding()]
     Param(
+        #The protocol to use. Valid values are http/https. Default is https.
+        [Parameter(Mandatory=$false)]
+        [ValidateSet("https","http")]
+        [string]$Protocol="https",
+
         #Name, FQDN or IP address of etcd server
         [Parameter(Mandatory=$true)]
         [Alias("Server","IPAddress","FQDN")]
@@ -106,7 +111,7 @@
         if ($PSBoundParameters.ContainsKey("Password")){
             Write-Verbose "[INFO] Username: $($Username)"
             #Write-Verbose "[INFO] Password: $($Password)"
-            $UnsecurePassword = (New-Object System.Management.Automation.PSCredential(“username”, $Password)).GetNetworkCredential().Password
+            $UnsecurePassword = (New-Object System.Management.Automation.PSCredential("username", $Password)).GetNetworkCredential().Password
         }
         
         Write-Verbose "[INFO] Key: $($Key)"
@@ -119,7 +124,7 @@
         $headers = @{"Authorization"=("Basic {0}" -f $base64AuthInfo)}
         Write-Verbose "[INFO] Headers: $($headers)"
 
-    }#end Begin block
+    }
 
     Process {
 
@@ -156,9 +161,9 @@
         #If a port is defined, updated the server uri.
         $serverUri = $null
         if($Port) {
-          $serverUri = "http://$($ComputerName):$($Port)"
+          $serverUri = "$($Protocol)://$($ComputerName):$($Port)"
         } else {
-          $serverUri = "http://$($ComputerName)"
+          $serverUri = "$($Protocol)://$($ComputerName)"
         }
         Write-Verbose "[INFO] Server Uri: $($serverUri)"
 
@@ -167,7 +172,7 @@
             $uri = "$($serverUri)$($Key)$($parameterList)"
         } else {
             $uri = "$($serverUri)$($Key)"
-        }#end if parameterList
+        }
         Write-Verbose "[INFO] uri: $($uri)"
         
         $result = Invoke-RestMethod -Uri $uri -Method $method -Headers $headers -ErrorVariable resultError
@@ -179,5 +184,5 @@
             #$result.node.value
         }
         $result.node
-    }#end Process block
-}#end Get-etcdKey
+    }
+}
